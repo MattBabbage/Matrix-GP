@@ -1,0 +1,33 @@
+digraph{
+
+# Graph style
+"ordering"="out"
+"rankdir"="TD"
+
+#########
+# Nodes #
+#########
+
+"Mul(Add(Symbol('a1'), Symbol('b2')), Add(Symbol('a3'), Mul(Integer(-1), Symbol('b3'))))_()" ["color"="black", "label"="Mul", "shape"="ellipse"];
+"Add(Symbol('a1'), Symbol('b2'))_(0,)" ["color"="black", "label"="Add", "shape"="ellipse"];
+"Symbol('a1')_(0, 0)" ["color"="black", "label"="a1", "shape"="ellipse"];
+"Symbol('b2')_(0, 1)" ["color"="black", "label"="b2", "shape"="ellipse"];
+"Add(Symbol('a3'), Mul(Integer(-1), Symbol('b3')))_(1,)" ["color"="black", "label"="Add", "shape"="ellipse"];
+"Symbol('a3')_(1, 0)" ["color"="black", "label"="a3", "shape"="ellipse"];
+"Mul(Integer(-1), Symbol('b3'))_(1, 1)" ["color"="black", "label"="Mul", "shape"="ellipse"];
+"Integer(-1)_(1, 1, 0)" ["color"="black", "label"="-1", "shape"="ellipse"];
+"Symbol('b3')_(1, 1, 1)" ["color"="black", "label"="b3", "shape"="ellipse"];
+
+#########
+# Edges #
+#########
+
+"Mul(Add(Symbol('a1'), Symbol('b2')), Add(Symbol('a3'), Mul(Integer(-1), Symbol('b3'))))_()" -> "Add(Symbol('a1'), Symbol('b2'))_(0,)";
+"Mul(Add(Symbol('a1'), Symbol('b2')), Add(Symbol('a3'), Mul(Integer(-1), Symbol('b3'))))_()" -> "Add(Symbol('a3'), Mul(Integer(-1), Symbol('b3')))_(1,)";
+"Add(Symbol('a1'), Symbol('b2'))_(0,)" -> "Symbol('a1')_(0, 0)";
+"Add(Symbol('a1'), Symbol('b2'))_(0,)" -> "Symbol('b2')_(0, 1)";
+"Add(Symbol('a3'), Mul(Integer(-1), Symbol('b3')))_(1,)" -> "Symbol('a3')_(1, 0)";
+"Add(Symbol('a3'), Mul(Integer(-1), Symbol('b3')))_(1,)" -> "Mul(Integer(-1), Symbol('b3'))_(1, 1)";
+"Mul(Integer(-1), Symbol('b3'))_(1, 1)" -> "Integer(-1)_(1, 1, 0)";
+"Mul(Integer(-1), Symbol('b3'))_(1, 1)" -> "Symbol('b3')_(1, 1, 1)";
+}

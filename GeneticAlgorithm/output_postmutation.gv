@@ -1,0 +1,29 @@
+digraph{
+
+# Graph style
+"ordering"="out"
+"rankdir"="TD"
+
+#########
+# Nodes #
+#########
+
+"Add(Symbol('a1'), Symbol('b2'), Symbol('b3'), Mul(Integer(-1), Symbol('a3')))_()" ["color"="black", "label"="Add", "shape"="ellipse"];
+"Symbol('a1')_(0,)" ["color"="black", "label"="a1", "shape"="ellipse"];
+"Symbol('b2')_(1,)" ["color"="black", "label"="b2", "shape"="ellipse"];
+"Symbol('b3')_(2,)" ["color"="black", "label"="b3", "shape"="ellipse"];
+"Mul(Integer(-1), Symbol('a3'))_(3,)" ["color"="black", "label"="Mul", "shape"="ellipse"];
+"Integer(-1)_(3, 0)" ["color"="black", "label"="-1", "shape"="ellipse"];
+"Symbol('a3')_(3, 1)" ["color"="black", "label"="a3", "shape"="ellipse"];
+
+#########
+# Edges #
+#########
+
+"Add(Symbol('a1'), Symbol('b2'), Symbol('b3'), Mul(Integer(-1), Symbol('a3')))_()" -> "Symbol('a1')_(0,)";
+"Add(Symbol('a1'), Symbol('b2'), Symbol('b3'), Mul(Integer(-1), Symbol('a3')))_()" -> "Symbol('b2')_(1,)";
+"Add(Symbol('a1'), Symbol('b2'), Symbol('b3'), Mul(Integer(-1), Symbol('a3')))_()" -> "Symbol('b3')_(2,)";
+"Add(Symbol('a1'), Symbol('b2'), Symbol('b3'), Mul(Integer(-1), Symbol('a3')))_()" -> "Mul(Integer(-1), Symbol('a3'))_(3,)";
+"Mul(Integer(-1), Symbol('a3'))_(3,)" -> "Integer(-1)_(3, 0)";
+"Mul(Integer(-1), Symbol('a3'))_(3,)" -> "Symbol('a3')_(3, 1)";
+}
