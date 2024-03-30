@@ -8,7 +8,7 @@ Create a Genetic Programming Algorithm to find methods of matrix multiplication.
 
 Fast matrix multiplication is partially an unsolved problem, given our current computers.
 Multiplication is the easiest way to multiple matrices, as you might expect, but for our computers its faster to add and subtract.
-So it turns out you can subtract multiplcations to make it faster! It began with Strassens algorithm.
+So it turns out you can remove multiplcations to make it faster! It began with Strassens algorithm.
 
 **How is success measured?**
 
