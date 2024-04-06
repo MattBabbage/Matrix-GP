@@ -21,6 +21,9 @@ class GeneticAlgorithm:
         self.q1_fitness = []
         self.q2_fitness = []
         self.q3_fitness = []
+        # Fitness
+        self.n_mutations = []
+        self.average_depth = []
         # Elites
         self.elites = []
         self.elites_fitness = []
@@ -32,6 +35,8 @@ class GeneticAlgorithm:
         self.solution_matrices = []
         # Config Settings
         self.config = config
+        #
+        self.mutation_each_gen = []
 
     def save_solutions(self):
         df = pd.DataFrame(self.solutions)
@@ -53,12 +58,13 @@ class GeneticAlgorithm:
         # Calculate Initial Fitness
         self.population.check_fitness(self.train_df)
         self.save_elites()
-        self.log_scores()
+        self.log_scores(0)
         # Setup loop for all generations
         for n_gen in range(self.config.n_generations):
             print("Generation " + str(n_gen))
             print("     Mutation")
-            self.population.mutate(self.config.r_mutation)
+            n_mut = self.population.mutate(self.config.r_mutation)
+            print("         Total Mutations: ", n_mut)
             print("     Selection")
             self.population.roulette_selection()   
             print("     Crossover")
@@ -67,20 +73,30 @@ class GeneticAlgorithm:
             self.population.check_fitness(self.train_df)
             print("     Post Fitness")
             # self.population.print_all()
-            self.log_scores()
+            self.log_scores(n_mut)
             # elitism
             self.replace_unfit_with_elites()
             print("     Post Replacements")
             # self.population.print_all()
             # self.population.print_all()
             self.save_elites()
+            self.balance_settings(n_mut)
             # self.population.print_all()
             # self.population.check_fitness(train_df)
             if self.population.fittest_score == 0:
                 print("Found Solution")
                 return
 
-    def log_scores(self):
+    def balance_settings(self, n_mut):
+        if self.config.mutation_balancing == True:
+            n_desired_mutations = self.config.n_individuals * self.config.mutation_balance_value
+            if n_mut < n_desired_mutations:
+                self.config.r_mutation += self.config.mutation_increment_value
+            else:
+                self.config.r_mutation -= self.config.mutation_increment_value
+
+
+    def log_scores(self, n_mut):
             fitness = np.array([x for x in self.population.all_fitness if x == x])
 
             fitness_no_outliers = np.array([y for y in fitness if not isinstance(y, sympy.core.numbers.Infinity)])
@@ -96,6 +112,9 @@ class GeneticAlgorithm:
             self.q2_fitness.append(np.percentile(fitness, 50))
             self.q3_fitness.append(np.percentile(fitness, 75))
 
+            self.average_depth.append(np.mean(self.population.all_node_depth))
+            self.n_mutations.append(n_mut)
+            self.mutation_each_gen.append(self.config.r_mutation)
             #self.check_variation()
 
     # def check_variation(self):
@@ -108,7 +127,7 @@ class GeneticAlgorithm:
         return data[abs(data - np.median(data)) < m  * np.std(data)]
 
     def plot_fitness(self):
-        fig, (ax1) = plt.subplots(1,1)
+        fig, (ax1, ax2, ax3) = plt.subplots(3,1)
         ax1.plot(self.fittest_scores, 'r-')
         ax1.plot(self.q1_fitness, 'r-.')
         ax1.plot(self.q2_fitness, 'g-.')
@@ -119,7 +138,29 @@ class GeneticAlgorithm:
         ax1.ticklabel_format(useOffset=False)
         ax1.axhline(y=0, color='k')
 
+        print(self.fittest_scores)
+        print(np.diff(self.fittest_scores))
+
+        ax2.plot(self.n_mutations, 'r-', label='N mutations')
+        ax2.plot(self.average_depth, 'b-', label='Average node tree depth')
+        ax2.plot(np.absolute(np.append(np.diff(self.fittest_scores), 0) / self.fittest_scores * 100), 'g-',
+                 label='% Improvement top fitness')
+        ax2.set_xlabel('Generation')
+        ax2.ticklabel_format(useOffset=False)
+        ax2.axhline(y=0, color='k')
+        ax2.legend(loc="upper left")
+
+        ax3.plot(np.divide(self.n_mutations, self.config.n_individuals), 'r-', label='Mutations per individual')
+        ax3.plot(np.multiply(np.subtract(self.average_depth,8), self.mutation_each_gen), 'b-', label='Predicted number of mutation')
+        ax3.set_xlabel('Generation')
+        ax3.ticklabel_format(useOffset=False)
+        ax3.axhline(y=0, color='k')
+        ax3.legend(loc="upper left")
         plt.show()
+
+        print(np.absolute(np.diff(self.fittest_scores)))
+        print(self.fittest_scores)
+        print(np.absolute(np.append(np.diff(self.fittest_scores), 0) / self.fittest_scores * 100))
 
     def save_elites(self):
 
@@ -147,7 +188,7 @@ class GeneticAlgorithm:
         elite_idx = 0
         for idx in fitness_with_elite_order_index:
             #Check fitness matches guy!
-            f = pop_with_elite[idx].check_fitness(self.train_df, self.population.variables)
+            f, n = pop_with_elite[idx].check_fitness(self.train_df, self.population.variables)
             if f != fitness_with_elite[idx]:
                 print("Something gone very wrong here")
 

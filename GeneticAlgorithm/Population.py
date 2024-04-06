@@ -21,7 +21,7 @@ class Population:
         # List of individuals
         self.individuals = self.individual_generator.gen_trees(2, 2, n_pop)
         self.all_fitness = []
-
+        self.all_node_depth = []
         # Statistics about population
         self.fittest_score = None
         self.fittest_equation_matrix = None
@@ -31,8 +31,11 @@ class Population:
     def check_fitness(self, df):
         try:
             self.all_fitness = []
+            self.all_node_depth = []
+
             for individual in self.individuals:
-                individual_fit = individual.check_fitness(df, self.variables)
+                individual_fit, n_nodes = individual.check_fitness(df, self.variables)
+                self.all_node_depth.append(n_nodes)
                 if individual_fit != individual_fit:
                     print("Nan Nan")
                 # if isinstance(individual_fit, sympy.core.numbers.nan):
@@ -60,8 +63,10 @@ class Population:
             print("exception occured")
 
     def mutate(self, r_mut):
+        n_total_mutations = 0
         for i in self.individuals:
-            i.mutate(self.operations, r_mut)
+            n_total_mutations += i.mutate(self.operations, r_mut)
+        return n_total_mutations
 
     def roulette_selection(self):
         new_individuals = []

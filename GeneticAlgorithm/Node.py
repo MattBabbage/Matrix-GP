@@ -11,10 +11,13 @@ function_string_map = {
 
 
 class Node:
-    def __init__(self, data, locked_multiplication=False):
+    def __init__(self, data, locked_multiplication=False, locked_operation=False):
         self.children = []
         self.data = data
+        # Lock as a Multiplication, this should never change
         self.locked_multiplication = locked_multiplication
+        # Lock as an Operation (+/-) but allow mutation to other operations
+        self.locked_operation = locked_operation
 
     def subtrees(self):
         if not self.children:
@@ -88,17 +91,16 @@ class Node:
 
     def mutate(self, operations, variables, r_mut):
 
-        if self.locked_multiplication:
-            #print("Cant mutate as locked")
-            return False
-
+        mutate_count = 0
         chance_op = 0.3
         # if no children make mutation more likely
         # if not self.children:
         #     r_mut = r_mut * 2
 
         mutated = np.random.rand() < r_mut
-        if mutated:
+
+        if mutated and self.locked_multiplication != True:
+            mutate_count += 1
             if np.random.rand() < chance_op:
                 self.data = random.choice(operations)
             else:
@@ -109,10 +111,10 @@ class Node:
                 self.add_children(operations, variables, 2, 1)
         if self.children:
             for child in self.children:
-                child_mutated = child.mutate(operations, variables, r_mut)
-                if child_mutated:
-                    mutated = True
-        return mutated
+                child_mutate_count = child.mutate(operations, variables, r_mut)
+                mutate_count += child_mutate_count
+
+        return mutate_count
 
     def get_count(self):
         n_children = 0

@@ -64,6 +64,12 @@ class Tree:
         # e = self.equation_matrix
         # print(self.node.get_count())
         # print(e)
+        total_nodes = 0
+        for i in self.m_node_matrix:
+            total_nodes += i.get_count()
+        for i in self.c_node_matrix:
+            total_nodes += i.get_count()
+
         errors = []
         for n_row in range(0, df.shape[0]):
             subs_array = []
@@ -96,18 +102,24 @@ class Tree:
             return 0.9999
 
         self.fitness_matrix = np.mean(errors, axis=0, dtype=float)
-        return np.mean(errors, dtype=float)
+        average_dif = np.mean(errors, dtype=float)
+        return average_dif, total_nodes
 
     def mutate(self, operations, r_mut):
+        n_mutations = 0
         for n in range(0, len(self.m_node_matrix)):
             if self.m_node_matrix[n].mutate(operations, self.m_variables, r_mut):
                 self.refresh_m_equation_from_node(n)
-                self.refresh_m_graph_from_equation(n)
+                self.refresh_m_graph_from_equation(n)#
+                n_mutations += 1
 
         for n in range(0, len(self.c_node_matrix)):
             if self.c_node_matrix[n].mutate(operations, self.c_variables, r_mut):
                 self.refresh_c_equation_from_node(n)
                 self.refresh_c_graph_from_equation(n)
+                n_mutations += 1
+
+        return n_mutations
 
         #
         # for x in range(0, len(self.node_matrix[0])):

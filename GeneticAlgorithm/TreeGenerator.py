@@ -28,7 +28,7 @@ class TreeGenerator:
         # Create M Equations
         # Loop over tree adding to lists
         for i in range(0, self.n_multiplications):
-            new_node = Node("*", True)
+            new_node = Node("*", locked_multiplication=True)
             new_node.add_children(self.operations, self.m_variables, width, depth)
             new_equation = parse_expr(new_node.get_equation_as_string())
             m_nodes.append(new_node)
@@ -37,7 +37,7 @@ class TreeGenerator:
 
         # Create C Equations
         for i in range(0, self.matrix_dimension**2):
-            new_node = Node(random.choice(self.operations))
+            new_node = Node(random.choice(self.operations), locked_operation=True)
             new_node.add_children(self.operations, self.c_variables, width, depth)
             new_equation = parse_expr(new_node.get_equation_as_string())
             c_nodes.append(new_node)
