@@ -63,7 +63,7 @@ class GeneticAlgorithm:
         for n_gen in range(self.config.n_generations):
             print("Generation " + str(n_gen))
             print("     Mutation")
-            n_mut = self.population.mutate(self.config.r_mutation)
+            n_mut = self.population.mutate(self.config.r_mutation, self.config.mutation_r_expansion)
             print("         Total Mutations: ", n_mut)
             print("     Selection")
             self.population.roulette_selection()   

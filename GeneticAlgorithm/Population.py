@@ -62,10 +62,10 @@ class Population:
         except:
             print("exception occured")
 
-    def mutate(self, r_mut):
+    def mutate(self, r_mut, r_expansion):
         n_total_mutations = 0
         for i in self.individuals:
-            n_total_mutations += i.mutate(self.operations, r_mut)
+            n_total_mutations += i.mutate(self.operations, r_mut, r_expansion)
         return n_total_mutations
 
     def roulette_selection(self):
@@ -81,7 +81,9 @@ class Population:
                 x[index] = np.max(list_of_reals)
 
         # x = list(map(lambda idx: idx.replace(sympy.core.numbers.Infinity, (np.max(x))), x))
-        norm_fitness = (x-np.min(x))/(np.max(x)-np.min(x))
+        if np.max(x)-np.min(x) == 0:
+            print("----------------------------------------------------------------- o shit its div 0")
+        norm_fitness = (x-np.min(x))/(np.max(x)-np.min(x) + 10**-100)
         inv_norm_fit = [(1 - fit) for fit in norm_fitness]
 
         # if they are all the same fitness, set inv norm fitness to all be the same

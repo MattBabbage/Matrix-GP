@@ -105,16 +105,16 @@ class Tree:
         average_dif = np.mean(errors, dtype=float)
         return average_dif, total_nodes
 
-    def mutate(self, operations, r_mut):
+    def mutate(self, operations, r_mut, r_mut_op=0.3):
         n_mutations = 0
         for n in range(0, len(self.m_node_matrix)):
-            if self.m_node_matrix[n].mutate(operations, self.m_variables, r_mut):
+            if self.m_node_matrix[n].mutate(operations, self.m_variables, r_mut, r_mut_op):
                 self.refresh_m_equation_from_node(n)
-                self.refresh_m_graph_from_equation(n)#
+                self.refresh_m_graph_from_equation(n)
                 n_mutations += 1
 
         for n in range(0, len(self.c_node_matrix)):
-            if self.c_node_matrix[n].mutate(operations, self.c_variables, r_mut):
+            if self.c_node_matrix[n].mutate(operations, self.c_variables, r_mut, r_mut_op):
                 self.refresh_c_equation_from_node(n)
                 self.refresh_c_graph_from_equation(n)
                 n_mutations += 1

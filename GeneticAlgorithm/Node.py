@@ -89,10 +89,9 @@ class Node:
             new_child.update_from_equation(arg)
             self.children.append(new_child)
 
-    def mutate(self, operations, variables, r_mut):
+    def mutate(self, operations, variables, r_mut, chance_op=0.3):
 
         mutate_count = 0
-        chance_op = 0.3
         # if no children make mutation more likely
         # if not self.children:
         #     r_mut = r_mut * 2
@@ -118,6 +117,8 @@ class Node:
 
     def get_count(self):
         n_children = 0
+
+
         if self.children:
             for child in self.children:
                 n_children = n_children + child.get_count()
